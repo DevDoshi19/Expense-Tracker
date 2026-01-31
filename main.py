@@ -7,6 +7,9 @@ import asyncio
 from fastmcp import FastMCP
 from contextlib import asynccontextmanager
 
+# Import configuration
+from config import ENVIRONMENT, MCP_TRANSPORT, MCP_HOST, MCP_PORT, ENABLE_LOGGING, print_config
+
 # Base directories
 BASE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -946,4 +949,34 @@ async def get_current_user() -> Dict[str, Any]:
 # ============================================
 
 if __name__ == "__main__":
-    mcp.run()
+    # Print configuration
+    if ENABLE_LOGGING:
+        print_config()
+    
+    # Run MCP Server based on transport type
+    if MCP_TRANSPORT == "stdio":
+        # Local: Claude Desktop via stdio (default)
+        if ENABLE_LOGGING:
+            print(f"Starting Expense Tracker MCP Server (Local Mode)")
+            print(f"Listening on stdio for Claude Desktop...\n")
+        mcp.run()
+    
+    elif MCP_TRANSPORT == "sse":
+        # Remote: Server-Sent Events for cloud deployment
+        if ENABLE_LOGGING:
+            print(f"Starting Expense Tracker MCP Server (Remote Mode - SSE)")
+            print(f"Listening on {MCP_HOST}:{MCP_PORT}\n")
+        mcp.run(transport="sse", host=MCP_HOST, port=MCP_PORT)
+    
+    elif MCP_TRANSPORT == "http":
+        # Custom HTTP transport
+        if ENABLE_LOGGING:
+            print(f"Starting Expense Tracker MCP Server (Custom HTTP)")
+            print(f"Listening on {MCP_HOST}:{MCP_PORT}\n")
+        mcp.run(transport="http", host=MCP_HOST, port=MCP_PORT)
+    
+    else:
+        # Default to stdio if unknown transport
+        if ENABLE_LOGGING:
+            print(f"Unknown transport: {MCP_TRANSPORT}, defaulting to stdio")
+        mcp.run()

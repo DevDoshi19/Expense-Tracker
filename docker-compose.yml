@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  expense-tracker:
+    build: .
+    container_name: expense-tracker-server
+    ports:
+      - "8000:8000"
+    environment:
+      MCP_TRANSPORT: sse
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: 8000
+      MCP_ENV: production
+      ENABLE_LOGGING: "false"
+      LOG_LEVEL: WARNING
+      DB_ENABLE_WAL: "true"
+    volumes:
+      - ./data:/app/data
+      - ./resources:/app/resources
+      - ./prompts:/app/prompts
+    restart: unless-stopped
+    networks:
+      - expense-tracker-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import asyncio; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+networks:
+  expense-tracker-network:
+    driver: bridge
+
+volumes:
+  data:
+    driver: local
