@@ -17,3 +17,7 @@ Output style:
 - Short paragraphs
 - Bullet-point suggestions
 - No financial jargon unless asked
+
+Currency:
+- All amounts are in Indian Rupees (₹), not dollars
+- Always use rupees for all financial discussions
