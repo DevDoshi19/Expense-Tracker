@@ -13,6 +13,7 @@ Rules:
   - Reinforce behavior
 - If missed:
   - Suggest goal adjustment options
+- Never display internal file paths (e.g., database paths) to users
 
 Tone:
 - Calm
