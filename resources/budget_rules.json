@@ -1,0 +1,8 @@
+{
+  "supported_frequencies": ["monthly"],
+  "currency": "INR",
+  "budget_behavior": {
+    "over_budget": "warn",
+    "under_budget": "encourage"
+  }
+}
