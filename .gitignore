@@ -49,6 +49,34 @@ ENV/
 
 # OS files
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Archived files - local documentation, deployment guides, local testing
+archived/
+
+# Docker & containerization - use cloud deployment instead
+Dockerfile
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# Deployment scripts - use FastMCP cloud dashboard
+deploy.sh
+deployment/
+
+# Local development tools
+syn_for_local.py
+test_deployment.py
+
+# Lock files from development
+uv.lock
+poetry.lock
+
+# Python version files
+.python-version
+.tool-versions
+.DS_Store
 Thumbs.db
 
 # Environment variables

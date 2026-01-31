@@ -1,0 +1,110 @@
+FASTMCP CLOUD - MINIMAL PROJECT STRUCTURE
+
+✅ KEEP THESE FILES (Essential for FastMCP Cloud):
+
+    main.py                          - Core MCP server (950 lines)
+    config.py                        - Configuration system
+    requirements.txt                 - Python dependencies
+    pyproject.toml                   - Project metadata
+    README.md                        - Project documentation
+    .env.example                     - Environment template
+    .gitignore                       - Git ignore rules
+    
+    prompts/                         - AI assistant templates (3 files)
+      ├─ financial_assistant.txt
+      ├─ budget_coach.txt
+      └─ savings_advisor.txt
+    
+    resources/                       - Configuration files (3 JSON files)
+      ├─ categories.json
+      ├─ saving_sources.json
+      └─ budget_rules.json
+    
+    data/                            - Runtime database (auto-created)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ REMOVE THESE (Documentation & Local-only):
+
+    DEPLOYMENT_CHECKLIST.md
+    DEPLOYMENT_COMPLETE.md
+    FINAL_STATUS_REPORT.md
+    GITHUB_DEPLOYMENT_GUIDE.md
+    GITHUB_PUSH_SUMMARY.txt
+    QUICK_GITHUB_PUSH.md
+    READY_TO_DEPLOY.txt
+    REMOTE_DEPLOYMENT_READY.txt
+    
+    test_deployment.py               - Local testing only
+    syn_for_local.py                 - Local sync helper
+    deploy.sh                        - Shell script (not needed)
+    
+    Dockerfile                       - Docker config (not needed for FastMCP)
+    docker-compose.yml               - Docker compose (not needed)
+    uv.lock                          - Lock file (not needed)
+    .python-version                  - Python version file
+
+═══════════════════════════════════════════════════════════════════════════════
+
+TOTAL UPLOAD SIZE: ~2 MB
+
+  main.py + config.py:             100 KB
+  requirements.txt:                 5 KB
+  Resources (JSON):                50 KB
+  Prompts (TXT):                   30 KB
+  README.md:                       10 KB
+  Other config:                    10 KB
+  Total:                          ~200 KB (very lightweight!)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+UPLOAD TO FASTMCP CLOUD:
+
+1. Go to FastMCP cloud dashboard
+2. Create new server project
+3. Upload these files/folders:
+   ├─ main.py
+   ├─ config.py
+   ├─ requirements.txt
+   ├─ pyproject.toml
+   ├─ README.md
+   ├─ .env.example
+   ├─ prompts/
+   └─ resources/
+4. Set environment variables:
+   ├─ MCP_TRANSPORT=sse
+   ├─ MCP_HOST=0.0.0.0
+   └─ MCP_PORT=8000
+5. Deploy!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+FASTMCP CLOUD SETTINGS:
+
+  MCP_TRANSPORT: sse               (FastMCP cloud uses SSE)
+  MCP_HOST: 0.0.0.0               (Listen on all interfaces)
+  MCP_PORT: 8000                  (Or platform-assigned)
+  MCP_ENV: production
+  ENABLE_LOGGING: false           (For performance)
+  LOG_LEVEL: WARNING
+
+═══════════════════════════════════════════════════════════════════════════════
+
+AFTER UPLOAD:
+
+You'll get a CloudServer URL like:
+  https://api.fastmcp.xyz/servers/your-server-id
+
+Use this to:
+  1. Connect Claude Desktop (if supporting local connections)
+  2. Call tools via API
+  3. Scale automatically
+  4. Monitor logs in FastMCP dashboard
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ READY FOR FASTMCP CLOUD!
+
+Your project is now optimized for cloud deployment with minimal file size.
+
+═══════════════════════════════════════════════════════════════════════════════
