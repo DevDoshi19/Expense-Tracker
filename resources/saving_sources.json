@@ -5,5 +5,12 @@
   "investment_return",
   "gift",
   "refund",
+  "cashback",
+  "bonus",
+  "interest",
+  "dividends",
+  "rental_income",
+  "sale",
+  "scholarship",
   "other"
 ]

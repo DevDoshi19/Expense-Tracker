@@ -156,13 +156,18 @@ async def validate_category(category: str, subcategory: Optional[str] = None) ->
     return normalized_category, normalized_subcategory
 
 
-async def validate_saving_source(source: str):
-    """Validate saving source."""
-    if not source:
-        return
+async def validate_saving_source(source: str) -> str:
+    """Normalize saving source to safe defaults."""
     sources = load_json(SAVING_SOURCES_PATH)
-    if source not in sources:
-        raise ValueError(f"Invalid saving source: {source}. Available: {sources}")
+    normalized_source = (source or "").strip().lower()
+
+    if not normalized_source:
+        return "other" if "other" in sources else sources[0]
+
+    if normalized_source not in sources:
+        return "other" if "other" in sources else sources[0]
+
+    return normalized_source
 
 
 def months_between(start_date: str, end_date: str) -> int:
@@ -418,7 +423,7 @@ async def add_saving(
     if amount <= 0:
         raise ValueError("amount must be positive")
     
-    await validate_saving_source(source)
+    source = await validate_saving_source(source)
     await init_db(user_id)
     
     async with get_db_connection(user_id) as conn:

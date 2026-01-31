@@ -91,10 +91,17 @@ def validate_category(category: str, subcategory: Optional[str] = None):
             f"Invalid subcategory '{subcategory}' for category '{category}'"
         )
 
-def validate_saving_source(source: str):
+def validate_saving_source(source: str) -> str:
     sources = load_json(SAVING_SOURCES_PATH)
-    if source and source not in sources:
-        raise ValueError(f"Invalid saving source: {source}")
+    normalized_source = (source or "").strip().lower()
+
+    if not normalized_source:
+        return "other" if "other" in sources else sources[0]
+
+    if normalized_source not in sources:
+        return "other" if "other" in sources else sources[0]
+
+    return normalized_source
 
 def months_between(start_date: str, end_date: str) -> int:
     """
@@ -281,7 +288,7 @@ def add_saving(date: str, amount: float, source: str = "", note: str = "") -> di
     if amount <= 0:
         raise ValueError("amount must be positive")
     
-    validate_saving_source(source)
+    source = validate_saving_source(source)
 
     with sqlite3.connect(DB_PATH) as c:
         cur = c.execute("""
