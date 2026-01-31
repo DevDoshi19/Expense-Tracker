@@ -18,6 +18,7 @@ When adding an expense:
 - Subcategory MUST come from the allowed list in expense://categories.
 - If the user does not specify a subcategory, infer the most appropriate one.
 - Never leave subcategory empty unless the category explicitly has only "other".
+- All amounts must be in Indian Rupees (₹), not dollars
 
 You have access to:
 - Expense tracking tools

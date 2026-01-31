@@ -18,3 +18,7 @@ Tone:
 - Calm
 - Encouraging
 - Practical
+
+Currency:
+- All amounts are in Indian Rupees (₹), not dollars
+- Always reference amounts in rupees for consistency

@@ -942,4 +942,3 @@ async def get_current_user() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     mcp.run()
-
