@@ -126,20 +126,34 @@ async def init_db(user_id: str):
 # VALIDATION FUNCTIONS
 # ============================================
 
-async def validate_category(category: str, subcategory: Optional[str] = None):
-    """Validate category and subcategory."""
+async def validate_category(category: str, subcategory: Optional[str] = None) -> tuple[str, str]:
+    """Validate category and subcategory.
+
+    Always returns a valid (category, subcategory) pair by normalizing unknown
+    inputs to safe defaults. This prevents client-side errors when users pass
+    unexpected values.
+    """
     categories = load_json(CATEGORIES_PATH)
-    category = category.lower()
-    subcategory = subcategory.lower() if subcategory else "other"
-    
-    if category not in categories:
-        raise ValueError(f"Invalid category: {category}. Available: {list(categories.keys())}")
-    
-    if subcategory and subcategory not in categories[category]:
-        raise ValueError(
-            f"Invalid subcategory '{subcategory}' for category '{category}'. "
-            f"Available: {categories[category]}"
-        )
+    normalized_category = (category or "").strip().lower()
+    normalized_subcategory = (subcategory or "").strip().lower()
+
+    if normalized_category not in categories:
+        normalized_category = "misc"
+
+    available_subcategories = categories[normalized_category]
+
+    if not normalized_subcategory:
+        if "other" in available_subcategories:
+            normalized_subcategory = "other"
+        else:
+            normalized_subcategory = available_subcategories[0]
+    elif normalized_subcategory not in available_subcategories:
+        if "other" in available_subcategories:
+            normalized_subcategory = "other"
+        else:
+            normalized_subcategory = available_subcategories[0]
+
+    return normalized_category, normalized_subcategory
 
 
 async def validate_saving_source(source: str):
@@ -216,18 +230,24 @@ async def add_expense(
     if amount <= 0:
         raise ValueError("amount must be positive")
     
-    await validate_category(category, subcategory)
+    category, subcategory = await validate_category(category, subcategory)
     await init_db(user_id)
     
     async with get_db_connection(user_id) as conn:
         cursor = await conn.execute("""
             INSERT INTO expenses(date, amount, category, subcategory, note)
             VALUES(?, ?, ?, ?, ?)
-        """, (date, amount, category.lower(), subcategory.lower(), note))
+        """, (date, amount, category, subcategory, note))
         
         expense_id = cursor.lastrowid
     
-    return {"status": "ok", "id": expense_id, "message": "Expense added successfully"}
+    return {
+        "status": "ok",
+        "id": expense_id,
+        "category": category,
+        "subcategory": subcategory,
+        "message": "Expense added successfully"
+    }
 
 @mcp.tool()
 async def list_expenses(user_id: Optional[str] = None) -> List[Dict[str, Any]]:
@@ -324,12 +344,26 @@ async def update_expense(
         updates.append("amount = ?")
         values.append(amount)
     if category is not None:
-        await validate_category(category, subcategory)
+        category, normalized_subcategory = await validate_category(category, subcategory)
         updates.append("category = ?")
-        values.append(category.lower())
-    if subcategory is not None:
+        values.append(category)
+        if subcategory is None:
+            updates.append("subcategory = ?")
+            values.append(normalized_subcategory)
+        else:
+            updates.append("subcategory = ?")
+            values.append(normalized_subcategory)
+    elif subcategory is not None:
+        async with get_db_connection(user_id) as conn:
+            cursor = await conn.execute("SELECT category FROM expenses WHERE id = ?", (expense_id,))
+            row = await cursor.fetchone()
+            if not row:
+                return {"status": "not_found", "id": expense_id, "message": "Expense not found"}
+            current_category = row["category"]
+
+        current_category, normalized_subcategory = await validate_category(current_category, subcategory)
         updates.append("subcategory = ?")
-        values.append(subcategory.lower())
+        values.append(normalized_subcategory)
     if note is not None:
         updates.append("note = ?")
         values.append(note)
@@ -677,7 +711,7 @@ async def set_budget(
     if monthly_limit <= 0:
         raise ValueError("monthly_limit must be positive")
     
-    await validate_category(category)
+    category, _ = await validate_category(category)
     await init_db(user_id)
     
     async with get_db_connection(user_id) as conn:
@@ -685,11 +719,11 @@ async def set_budget(
             INSERT INTO budgets(category, monthly_limit)
             VALUES(?, ?)
             ON CONFLICT(category) DO UPDATE SET monthly_limit=excluded.monthly_limit
-        """, (category.lower(), monthly_limit))
+        """, (category, monthly_limit))
     
     return {
         "status": "ok",
-        "category": category.lower(),
+        "category": category,
         "monthly_limit": monthly_limit,
         "message": "Budget set successfully"
     }
@@ -776,7 +810,7 @@ async def update_budget(
     if monthly_limit <= 0:
         raise ValueError("monthly_limit must be positive")
     
-    await validate_category(category)
+    category, _ = await validate_category(category)
     await init_db(user_id)
     
     async with get_db_connection(user_id) as conn:
@@ -784,14 +818,14 @@ async def update_budget(
             UPDATE budgets
             SET monthly_limit = ?
             WHERE category = ?
-        """, (monthly_limit, category.lower()))
+        """, (monthly_limit, category))
         
         if cursor.rowcount == 0:
             return {"status": "not_found", "message": "Budget not found for this category"}
     
     return {
         "status": "ok",
-        "category": category.lower(),
+        "category": category,
         "monthly_limit": monthly_limit,
         "message": "Budget updated successfully"
     }

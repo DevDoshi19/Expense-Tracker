@@ -3,9 +3,13 @@
     "groceries",
     "fruits_vegetables",
     "dairy_bakery",
+    "fast_food",
     "dining_out",
     "coffee_tea",
     "snacks",
+    "restaurant",
+    "takeaway",
+    "delivery",
     "delivery_fees",
     "other"
   ],
@@ -28,6 +32,9 @@
     "tolls",
     "vehicle_service",
     "vehicle_insurance",
+    "metro",
+    "bus",
+    "train",
     "other"
   ],
 
@@ -48,6 +55,8 @@
     "internet_broadband",
     "mobile_phone",
     "tv_dth",
+    "waste_management",
+    "maintenance_fees",
     "other"
   ],
 
@@ -87,6 +96,8 @@
     "games_apps",
     "outing",
     "concerts",
+    "theme_park",
+    "sports_events",
     "other"
   ],
 
@@ -97,6 +108,8 @@
     "electronics_gadgets",
     "appliances",
     "home_decor",
+    "gifts",
+    "stationery",
     "other"
   ],
 
@@ -152,6 +165,8 @@
     "visa_passport",
     "local_transport",
     "food_travel",
+    "sightseeing",
+    "luggage_fees",
     "other"
   ],
 
